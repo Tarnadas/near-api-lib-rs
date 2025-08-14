@@ -10,7 +10,7 @@
 //!
 //! This module aims to simplify transaction creation and enhance developer experience by providing a clear and concise
 //! way to interact with the NEAR blockchain programmatically.
-use near_crypto::{PublicKey, Signer};
+use near_crypto::{InMemorySigner, PublicKey};
 use near_primitives::{
     account::AccessKey,
     hash::CryptoHash,
@@ -50,7 +50,7 @@ impl TransactionBuilder {
     }
 
     /// Sign a transaction with your custom Signer.
-    pub fn sign_transaction(&self, signer: &Signer) -> SignedTransaction {
+    pub fn sign_transaction(&self, signer: &InMemorySigner) -> SignedTransaction {
         let signature = signer.sign(self.transaction.get_hash_and_size().0.as_ref());
         SignedTransaction::new(signature, self.transaction.clone())
     }
