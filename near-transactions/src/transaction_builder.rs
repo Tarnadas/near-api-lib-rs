@@ -17,7 +17,7 @@ use near_primitives::{
     transaction::{
         Action, AddKeyAction, CreateAccountAction, DeleteAccountAction, DeleteKeyAction,
         DeployContractAction, FunctionCallAction, SignedTransaction, StakeAction, Transaction,
-        TransferAction,
+        TransactionV0, TransferAction,
     },
     types::{AccountId, Balance, Gas, Nonce},
 };
@@ -38,19 +38,19 @@ impl TransactionBuilder {
         block_hash: CryptoHash,
     ) -> Self {
         Self {
-            transaction: Transaction {
+            transaction: Transaction::V0(TransactionV0 {
                 signer_id,
                 public_key,
                 receiver_id,
                 nonce,
                 block_hash,
                 actions: Vec::new(), // Initialize the actions vector here
-            },
+            }),
         }
     }
 
     /// Sign a transaction with your custom Signer.
-    pub fn sign_transaction(&self, signer: &dyn Signer) -> SignedTransaction {
+    pub fn sign_transaction(&self, signer: &Signer) -> SignedTransaction {
         let signature = signer.sign(self.transaction.get_hash_and_size().0.as_ref());
         SignedTransaction::new(signature, self.transaction.clone())
     }
@@ -58,7 +58,7 @@ impl TransactionBuilder {
     /// Methods to add CreateAccount action directly to the Transaction's actions vector
     pub fn create_account(&mut self) -> &mut Self {
         self.transaction
-            .actions
+            .actions_mut()
             .push(Action::CreateAccount(CreateAccountAction {}));
         self
     }
@@ -66,7 +66,7 @@ impl TransactionBuilder {
     /// Method to add a DeployContract action
     pub fn deploy_contract(&mut self, code: &[u8]) -> &mut Self {
         self.transaction
-            .actions
+            .actions_mut()
             .push(Action::DeployContract(DeployContractAction {
                 code: code.to_vec(),
             }));
@@ -81,7 +81,7 @@ impl TransactionBuilder {
         deposit: Balance,
     ) -> &mut Self {
         self.transaction
-            .actions
+            .actions_mut()
             .push(Action::FunctionCall(Box::new(FunctionCallAction {
                 method_name,
                 args,
@@ -93,20 +93,20 @@ impl TransactionBuilder {
 
     pub fn transfer(&mut self, deposit: Balance) -> &mut Self {
         self.transaction
-            .actions
+            .actions_mut()
             .push(Action::Transfer(TransferAction { deposit }));
         self
     }
 
     pub fn stake(&mut self, stake: Balance, public_key: PublicKey) -> &mut Self {
         self.transaction
-            .actions
+            .actions_mut()
             .push(Action::Stake(Box::new(StakeAction { stake, public_key })));
         self
     }
     pub fn add_key(&mut self, public_key: PublicKey, access_key: AccessKey) -> &mut Self {
         self.transaction
-            .actions
+            .actions_mut()
             .push(Action::AddKey(Box::new(AddKeyAction {
                 public_key,
                 access_key,
@@ -116,14 +116,14 @@ impl TransactionBuilder {
 
     pub fn delete_key(&mut self, public_key: PublicKey) -> &mut Self {
         self.transaction
-            .actions
+            .actions_mut()
             .push(Action::DeleteKey(Box::new(DeleteKeyAction { public_key })));
         self
     }
 
     pub fn delete_account(&mut self, beneficiary_id: AccountId) -> &mut Self {
         self.transaction
-            .actions
+            .actions_mut()
             .push(Action::DeleteAccount(DeleteAccountAction {
                 beneficiary_id,
             }));

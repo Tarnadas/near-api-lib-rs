@@ -1,12 +1,12 @@
 [package]
 name = "near-transactions"
-version = "0.1.0-alpha"
-edition = "2021"
+version = "0.1.0"
+edition = "2024"
 description = "High-level abstractions to facilitate the creation, manipulation, and signing of transactions on the NEAR blockchain."
 license = "MIT OR Apache-2.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-near-crypto = "0.21.1"
-near-primitives = "0.21.1"
+near-crypto = "0.30"
+near-primitives = "0.30"

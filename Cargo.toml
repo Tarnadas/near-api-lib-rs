@@ -4,9 +4,9 @@ members = [
     "near-providers",
     "near-transactions",
     "near-api-lib",
-    "near-accounts"
+    "near-accounts",
 ]
 exclude = ["examples/"]
 
 [workspace.package]
-version = "0.1.0-alpha"
+version = "0.1.0"
