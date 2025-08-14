@@ -57,19 +57,25 @@ impl TransactionBuilder {
 
     /// Methods to add CreateAccount action directly to the Transaction's actions vector
     pub fn create_account(&mut self) -> &mut Self {
-        self.transaction
-            .actions_mut()
-            .push(Action::CreateAccount(CreateAccountAction {}));
+        if let Transaction::V0(tx) = &mut self.transaction {
+            tx.actions
+                .push(Action::CreateAccount(CreateAccountAction {}));
+        } else {
+            panic!("Transaction is not a V0");
+        }
         self
     }
 
     /// Method to add a DeployContract action
     pub fn deploy_contract(&mut self, code: &[u8]) -> &mut Self {
-        self.transaction
-            .actions_mut()
-            .push(Action::DeployContract(DeployContractAction {
-                code: code.to_vec(),
-            }));
+        if let Transaction::V0(tx) = &mut self.transaction {
+            tx.actions
+                .push(Action::DeployContract(DeployContractAction {
+                    code: code.to_vec(),
+                }));
+        } else {
+            panic!("Transaction is not a V0");
+        }
         self
     }
 
@@ -80,53 +86,69 @@ impl TransactionBuilder {
         gas: Gas,
         deposit: Balance,
     ) -> &mut Self {
-        self.transaction
-            .actions_mut()
-            .push(Action::FunctionCall(Box::new(FunctionCallAction {
-                method_name,
-                args,
-                gas,
-                deposit,
-            })));
+        if let Transaction::V0(tx) = &mut self.transaction {
+            tx.actions
+                .push(Action::FunctionCall(Box::new(FunctionCallAction {
+                    method_name,
+                    args,
+                    gas,
+                    deposit,
+                })));
+        } else {
+            panic!("Transaction is not a V0");
+        }
         self
     }
 
     pub fn transfer(&mut self, deposit: Balance) -> &mut Self {
-        self.transaction
-            .actions_mut()
-            .push(Action::Transfer(TransferAction { deposit }));
+        if let Transaction::V0(tx) = &mut self.transaction {
+            tx.actions
+                .push(Action::Transfer(TransferAction { deposit }));
+        } else {
+            panic!("Transaction is not a V0");
+        }
         self
     }
 
     pub fn stake(&mut self, stake: Balance, public_key: PublicKey) -> &mut Self {
-        self.transaction
-            .actions_mut()
-            .push(Action::Stake(Box::new(StakeAction { stake, public_key })));
+        if let Transaction::V0(tx) = &mut self.transaction {
+            tx.actions
+                .push(Action::Stake(Box::new(StakeAction { stake, public_key })));
+        } else {
+            panic!("Transaction is not a V0");
+        }
         self
     }
     pub fn add_key(&mut self, public_key: PublicKey, access_key: AccessKey) -> &mut Self {
-        self.transaction
-            .actions_mut()
-            .push(Action::AddKey(Box::new(AddKeyAction {
+        if let Transaction::V0(tx) = &mut self.transaction {
+            tx.actions.push(Action::AddKey(Box::new(AddKeyAction {
                 public_key,
                 access_key,
             })));
+        } else {
+            panic!("Transaction is not a V0");
+        }
         self
     }
 
     pub fn delete_key(&mut self, public_key: PublicKey) -> &mut Self {
-        self.transaction
-            .actions_mut()
-            .push(Action::DeleteKey(Box::new(DeleteKeyAction { public_key })));
+        if let Transaction::V0(tx) = &mut self.transaction {
+            tx.actions
+                .push(Action::DeleteKey(Box::new(DeleteKeyAction { public_key })));
+        } else {
+            panic!("Transaction is not a V0");
+        }
         self
     }
 
     pub fn delete_account(&mut self, beneficiary_id: AccountId) -> &mut Self {
-        self.transaction
-            .actions_mut()
-            .push(Action::DeleteAccount(DeleteAccountAction {
+        if let Transaction::V0(tx) = &mut self.transaction {
+            tx.actions.push(Action::DeleteAccount(DeleteAccountAction {
                 beneficiary_id,
             }));
+        } else {
+            panic!("Transaction is not a V0");
+        }
         self
     }
 
